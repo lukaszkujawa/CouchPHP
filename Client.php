@@ -24,7 +24,7 @@ class Client {
 	}
 
 
-	public function parseResponse( $resp ) {
+	protected function parseResponse( $resp ) {
 		$resp = json_decode( $resp );
 		
 		if( ! $resp ) {
@@ -38,6 +38,29 @@ class Client {
 		return $resp;
 	}
 
+	public function getAllDocs() {
+		$all = $this->get( '/_all_docs');
+		if( $all->total_rows == 0 ) {
+			return array();
+		}
+
+		$docs = array();
+		foreach( $all->rows as $row ) {
+			$docs[] = new Document( $row );
+		}
+		return $docs;
+	}
+
+	public function getView( $designDocName, $viewName, $params = false ) {
+		$url = sprintf( "_design/%s/_view/%s", $designDocName, $viewName );
+		if( $params ) {
+			$url .= '?';
+			$url .= http_build_query( $params );
+		}
+
+		return $this->get( $url );
+	}
+
 	public function getUrl( $uri ) {
 		return sprintf( '%s%s', $this->path, $uri );
 	}
@@ -46,11 +69,11 @@ class Client {
 		return $this->parseResponse( CURL::get( $this->getUrl( $uri ) ) );
 	}
 
-	public function post( $uri, $data ) {
+	public function post( $uri, $data = array() ) {
 		return $this->parseResponse( CURL::post( $this->getUrl( $uri ), json_encode( $data ) ) );
 	}
 
-	public function put( $uri, $data ) {
+	public function put( $uri, $data = array() ) {
 		return $this->parseResponse( CURL::put( $this->getUrl( $uri ), json_encode( $data ) ) );
 	}
 

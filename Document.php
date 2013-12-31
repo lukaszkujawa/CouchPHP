@@ -84,6 +84,10 @@ class Document {
 		$this->_client = $client;
 	}
 
+	public function getClient() {
+		return $this->_client;
+	}
+
 	public function insert() {
 		if( $this->getId() ) {
 			$ret = $this->_client->put( $this->getId(), $this->getFields() );
