@@ -25,11 +25,15 @@ class Client {
 
 
 	protected function parseResponse( $resp ) {
-		$resp = json_decode( $resp );
-		
 		if( ! $resp ) {
 			throw new \Exception('Empty response from the server');
 		}
+
+		$resp = json_decode( $resp );
+
+		if( ! $resp ) {
+			throw new \Exception('Response is not a JSON');
+		}		
 
 		if( isset( $resp->error ) ) {
 			throw new ClientException( $resp->error );
@@ -59,6 +63,15 @@ class Client {
 		}
 
 		return $this->get( $url );
+	}
+
+	public function getAttachment( $id, $attachmentName ) {
+		$uri = urlencode( $id );
+		$uri .=  '/' . $attachmentName;
+		 
+		$data = CURL::get( $this->getUrl( $uri ) );
+
+		return $data;
 	}
 
 	public function getUrl( $uri ) {
