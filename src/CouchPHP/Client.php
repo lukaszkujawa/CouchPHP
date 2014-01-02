@@ -24,6 +24,18 @@ class Client {
 	}
 
 
+	public function getPath() {
+		return $this->path;
+	}
+
+	public function getDbname() {
+		return $this->dbname;
+	}
+
+	public function getHost() {
+		return $this->host;
+	}
+
 	protected function parseResponse( $resp ) {
 		if( ! $resp ) {
 			throw new \Exception('Empty response from the server');
